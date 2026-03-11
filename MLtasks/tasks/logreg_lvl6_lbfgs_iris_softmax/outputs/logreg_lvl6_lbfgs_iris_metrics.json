@@ -1,0 +1,53 @@
+{
+  "metadata": {
+    "task_name": "logreg_lvl6_lbfgs_iris_softmax",
+    "task_type": "classification",
+    "num_classes": 3,
+    "input_dim": 4,
+    "description": "Softmax regression on Iris using LBFGS optimizer with closure."
+  },
+  "train": {
+    "loss": 0.04404901573434472,
+    "accuracy": 0.9833333333333333,
+    "f1_macro": 0.9833333333333334,
+    "confusion_matrix": [
+      [
+        40,
+        0,
+        0
+      ],
+      [
+        0,
+        39,
+        1
+      ],
+      [
+        0,
+        1,
+        39
+      ]
+    ]
+  },
+  "validation": {
+    "loss": 0.05272712558507919,
+    "accuracy": 0.9666666666666667,
+    "f1_macro": 0.9665831244778612,
+    "confusion_matrix": [
+      [
+        10,
+        0,
+        0
+      ],
+      [
+        0,
+        9,
+        1
+      ],
+      [
+        0,
+        0,
+        10
+      ]
+    ]
+  }
+}

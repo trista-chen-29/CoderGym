@@ -1,0 +1,24 @@
+{
+  "train": {
+    "mse": 3.843296527862549,
+    "r2": 0.950240969657898
+  },
+  "validation": {
+    "mse": 4.114750862121582,
+    "r2": 0.9566861987113953
+  },
+  "metadata": {
+    "task_name": "linreg_lvl5_poly_features_cubic",
+    "task_type": "regression",
+    "input_type": "continuous",
+    "output_type": "continuous",
+    "description": "Polynomial regression with manual cubic features; nn.Linear on expanded features."
+  },
+  "config": {
+    "degree": 3,
+    "noise_std": 2.0,
+    "epochs": 200,
+    "lr": 0.01,
+    "batch_size": 64
+  }
+}

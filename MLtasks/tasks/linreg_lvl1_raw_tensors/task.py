@@ -16,7 +16,8 @@ import torch.nn as nn
 import matplotlib.pyplot as plt
 
 # Ensure output directory exists
-OUTPUT_DIR = '/Developer/AIserver/output/tasks/linreg_lvl1_raw_tensors'
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+OUTPUT_DIR = os.path.join(BASE_DIR, "outputs")
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 
 

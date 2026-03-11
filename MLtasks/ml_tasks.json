@@ -93,6 +93,36 @@
             }
         },
         {
+            "series": "Linear Regression",
+            "level": 5,
+            "id": "linreg_lvl5_poly_features_cubic",
+            "algorithm": "Linear Regression (Poly Features Cubic)",
+            "description": "Polynomial features up to cubic; single-file task with training + eval + assertions.",
+            "interface_protocol": "pytorch_task_v1",
+            "requirements": {
+                "data": "Synthetic: y = 0.5x^3 - 2x^2 + x + noise. 80/20 train/val split.",
+                "implementation": "Create cubic polynomial features manually. Use nn.Linear on expanded features. Use torch.optim (SGD/Adam).",
+                "evaluation": "evaluate() must return MSE and R2 on VALIDATION split.",
+                "artifacts": "Save a plot of data + fitted curve to outputs/.",
+                "validation": "Assert validation R2 > 0.85."
+            }
+        },
+        {
+            "series": "Linear Regression",
+            "level": 6,
+            "id": "linreg_lvl6_huber_regression",
+            "algorithm": "Linear Regression (Huber Regression)",
+            "description": "Huber regression; single-file task with training + eval + assertions.",
+            "interface_protocol": "pytorch_task_v1",
+            "requirements": {
+                "data": "Synthetic linear data with ~10% strong outliers. 80/20 train/val split.",
+                "implementation": "Use nn.Linear and SmoothL1Loss (Huber). Use torch.optim.",
+                "evaluation": "evaluate() must return MSE and R2 on VALIDATION split.",
+                "artifacts": "Save a scatter plot showing outliers + fitted line to outputs/.",
+                "validation": "Assert validation R2 > 0.80 and validation MSE < 2.0."
+            }
+        },
+        {
             "series": "Logistic Regression",
             "level": 1,
             "id": "logreg_lvl1_binary_raw",
@@ -148,6 +178,34 @@
                 "implementation": "Compute ECE (Expected Calibration Error) manually; optimize threshold for F1.",
                 "visualization": "Reliability diagram + ROC curve.",
                 "validation": "ECE decreases after calibration step (compare before/after)."
+            }
+        },
+        {
+            "series": "Logistic Regression",
+            "level": 5,
+            "id": "logreg_lvl5_breast_cancer_pos_weight",
+            "algorithm": "Logistic Regression (Breast Cancer Pos Weight)",
+            "description": "Binary logistic regression using breast cancer dataset with pos_weight (or equivalent).",
+            "interface_protocol": "pytorch_task_v1",
+            "requirements": {
+                "data": "Use sklearn.datasets.load_breast_cancer. Standardize features. 80/20 train/val split.",
+                "implementation": "Use nn.Linear(d,1) and BCEWithLogitsLoss(pos_weight=...). Use torch.optim.",
+                "metrics": "Compute confusion matrix + precision/recall/F1 on validation (sklearn ok).",
+                "validation": "Assert validation recall > 0.90."
+            }
+        },
+        {
+            "series": "Logistic Regression",
+            "level": 6,
+            "id": "logreg_lvl6_lbfgs_iris_softmax",
+            "algorithm": "Logistic Regression (LBFGS Iris Softmax)",
+            "description": "Softmax regression on Iris using LBFGS optimizer; single-file task with training + eval + assertions.",
+            "interface_protocol": "pytorch_task_v1",
+            "requirements": {
+                "data": "Use sklearn.datasets.load_iris. Standardize features. Stratified 80/20 train/val split.",
+                "implementation": "Use nn.Linear(4,3) + CrossEntropyLoss + torch.optim.LBFGS with closure.",
+                "metrics": "Report validation loss, accuracy, macro-F1.",
+                "validation": "Assert validation accuracy > 0.90 and macro-F1 > 0.90."
             }
         },
         {
