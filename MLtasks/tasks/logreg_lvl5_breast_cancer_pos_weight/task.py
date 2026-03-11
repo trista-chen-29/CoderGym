@@ -17,11 +17,13 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 from torch.utils.data import DataLoader, TensorDataset
+import matplotlib.pyplot as plt
 
 from sklearn.datasets import load_breast_cancer
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import confusion_matrix, precision_score, recall_score, f1_score, accuracy_score
+from sklearn.metrics import precision_recall_curve, average_precision_score
 
 # Set seeds for reproducibility
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -193,7 +195,56 @@ def evaluate(model, data_loader, device):
         "confusion_matrix": cm
     }
 
-def save_artifacts(model, metadata, train_metrics, val_metrics, history, pos_weight_value):
+def plot_confusion_matrix(cm, save_path, title="Confusion Matrix"):
+    """
+    cm: 2x2 list or np.array in format [[tn, fp],[fn, tp]]
+    """
+    cm = np.array(cm)
+
+    plt.figure(figsize=(5, 4))
+    plt.imshow(cm, interpolation="nearest")
+    plt.title(title)
+    plt.colorbar()
+    tick_marks = np.arange(2)
+    plt.xticks(tick_marks, ["Pred 0", "Pred 1"])
+    plt.yticks(tick_marks, ["True 0", "True 1"])
+
+    # annotate
+    for i in range(2):
+        for j in range(2):
+            plt.text(j, i, str(cm[i, j]), ha="center", va="center")
+
+    plt.ylabel("True label")
+    plt.xlabel("Predicted label")
+    plt.tight_layout()
+    plt.savefig(save_path, dpi=150, bbox_inches="tight")
+    plt.close()
+
+def plot_precision_recall_curve(model, X_val_np, y_val_np, device, save_path):
+    """
+    Uses model logits -> sigmoid probs; plots PR curve and saves figure.
+    """
+    model.eval()
+    with torch.no_grad():
+        Xv = torch.from_numpy(X_val_np.astype(np.float32)).to(device)
+        logits = model(Xv).squeeze(1)
+        probs = torch.sigmoid(logits).detach().cpu().numpy()
+
+    precision, recall, _ = precision_recall_curve(y_val_np, probs)
+    ap = average_precision_score(y_val_np, probs)
+
+    plt.figure(figsize=(6, 5))
+    plt.plot(recall, precision, linewidth=2)
+    plt.xlabel("Recall")
+    plt.ylabel("Precision")
+    plt.title(f"Precision-Recall Curve (AP={ap:.4f})")
+    plt.grid(True, alpha=0.3)
+    plt.tight_layout()
+    plt.savefig(save_path, dpi=150, bbox_inches="tight")
+    plt.close()
+
+def save_artifacts(model, metadata, train_metrics, val_metrics, history, pos_weight_value,
+                   X_val, y_val, device):
     """Save model, plots, and other artifacts."""
     payload = {
         "metadata": metadata,
@@ -212,6 +263,23 @@ def save_artifacts(model, metadata, train_metrics, val_metrics, history, pos_wei
 
     model_path = os.path.join(OUTPUT_DIR, "logreg_lvl5_breast_cancer_model.pt")
     torch.save(model.state_dict(), model_path)
+
+    # --- Visualizations (optional but useful) ---
+    cm_path = os.path.join(OUTPUT_DIR, "logreg_lvl5_val_confusion_matrix.png")
+    plot_confusion_matrix(
+        val_metrics["confusion_matrix"],
+        cm_path,
+        title="Validation Confusion Matrix"
+    )
+
+    pr_path = os.path.join(OUTPUT_DIR, "logreg_lvl5_val_precision_recall.png")
+    plot_precision_recall_curve(
+        model=model,
+        X_val_np=X_val,
+        y_val_np=y_val,
+        device=device,
+        save_path=pr_path
+    )
 
     print(f"Artifacts saved to {OUTPUT_DIR}")
 
@@ -261,7 +329,10 @@ def main():
     print(f"  Val Confusion Matrix: {val_metrics['confusion_matrix']}")
 
     print("\nSaving artifacts...")
-    save_artifacts(model, metadata, train_metrics, val_metrics, history, pos_weight.item())
+    save_artifacts(
+        model, metadata, train_metrics, val_metrics, history, pos_weight.item(),
+        X_val=X_val, y_val=y_val, device=device
+    )
 
     # Quality checks (per your JSON requirement)
     print("\n" + "=" * 60)

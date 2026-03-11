@@ -188,11 +188,12 @@
             "description": "Binary logistic regression using breast cancer dataset with pos_weight (or equivalent).",
             "interface_protocol": "pytorch_task_v1",
             "requirements": {
-                "data": "Use sklearn.datasets.load_breast_cancer. Standardize features. 80/20 train/val split.",
-                "implementation": "Use nn.Linear(d,1) and BCEWithLogitsLoss(pos_weight=...). Use torch.optim.",
+                "data": "Use sklearn.datasets.load_breast_cancer. Standardize features (fit scaler on train only). Stratified 80/20 train/val split.",
+                "implementation": "Use nn.Linear(d,1) and BCEWithLogitsLoss(pos_weight=...). Return logits (no sigmoid in forward). Use torch.optim.",
                 "metrics": "Compute confusion matrix + precision/recall/F1 on validation (sklearn ok).",
+                "artifacts": "Save to outputs/: logreg_lvl5_breast_cancer_model.pt, logreg_lvl5_breast_cancer_metrics.json, logreg_lvl5_val_confusion_matrix.png, logreg_lvl5_val_precision_recall.png.",
                 "validation": "Assert validation recall > 0.90."
-            }
+  }
         },
         {
             "series": "Logistic Regression",
@@ -202,9 +203,10 @@
             "description": "Softmax regression on Iris using LBFGS optimizer; single-file task with training + eval + assertions.",
             "interface_protocol": "pytorch_task_v1",
             "requirements": {
-                "data": "Use sklearn.datasets.load_iris. Standardize features. Stratified 80/20 train/val split.",
-                "implementation": "Use nn.Linear(4,3) + CrossEntropyLoss + torch.optim.LBFGS with closure.",
-                "metrics": "Report validation loss, accuracy, macro-F1.",
+                "data": "Use sklearn.datasets.load_iris. Standardize features (fit scaler on train only). Stratified 80/20 train/val split.",
+                "implementation": "Use nn.Linear(4,3) + CrossEntropyLoss + torch.optim.LBFGS with a closure that recomputes loss+grads over the full training set/batches.",
+                "metrics": "Report validation loss, accuracy, macro-F1 (optionally confusion matrix).",
+                "artifacts": "Save model, metrics JSON, and validation confusion matrix plot to outputs/.",
                 "validation": "Assert validation accuracy > 0.90 and macro-F1 > 0.90."
             }
         },

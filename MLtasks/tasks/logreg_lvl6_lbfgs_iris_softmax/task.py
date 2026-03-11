@@ -16,6 +16,7 @@ import numpy as np
 import torch
 import torch.nn as nn
 import torch.optim as optim
+import matplotlib.pyplot as plt
 from torch.utils.data import DataLoader, TensorDataset
 
 from sklearn.datasets import load_iris
@@ -172,6 +173,30 @@ def train_lbfgs(model, train_loader, criterion, device, max_iter=200, lr=1.0, ve
 
     return float(final_loss.item()) if hasattr(final_loss, "item") else float(final_loss)
 
+def plot_confusion_matrix(cm, save_path, title="Confusion Matrix"):
+    cm = np.array(cm)
+
+    plt.figure(figsize=(5, 4))
+    plt.imshow(cm, interpolation="nearest")
+    plt.title(title)
+    plt.colorbar()
+
+    classes = ["Class 0", "Class 1", "Class 2"]
+    tick_marks = np.arange(len(classes))
+    plt.xticks(tick_marks, classes)
+    plt.yticks(tick_marks, classes)
+
+    # annotate cells
+    for i in range(len(classes)):
+        for j in range(len(classes)):
+            plt.text(j, i, str(cm[i, j]), ha="center", va="center")
+
+    plt.ylabel("True label")
+    plt.xlabel("Predicted label")
+    plt.tight_layout()
+    plt.savefig(save_path, dpi=150, bbox_inches="tight")
+    plt.close()
+
 def save_artifacts(model, metrics):
     """Save model artifacts and visualizations."""
     model_path = os.path.join(OUTPUT_DIR, "logreg_lvl6_lbfgs_iris_model.pt")
@@ -180,6 +205,11 @@ def save_artifacts(model, metrics):
     metrics_path = os.path.join(OUTPUT_DIR, "logreg_lvl6_lbfgs_iris_metrics.json")
     with open(metrics_path, "w") as f:
         json.dump(metrics, f, indent=2)
+
+    # Save confusion matrix plot (validation)
+    cm = metrics["validation"]["confusion_matrix"]
+    cm_path = os.path.join(OUTPUT_DIR, "logreg_lvl6_lbfgs_iris_confusion_matrix.png")
+    plot_confusion_matrix(cm, cm_path, title="Iris Validation Confusion Matrix")
 
     print(f"Artifacts saved to {OUTPUT_DIR}")
 
