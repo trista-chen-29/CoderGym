@@ -571,6 +571,22 @@
             }
         },
         {
+            "series": "Neural Networks (MLP)",
+            "level": 5,
+            "id": "mlp_lvl5_tabular_multilabel",
+            "algorithm": "MLP (Tabular Multilabel Classification)",
+            "description": "Train a PyTorch MLP on a synthetic multilabel tabular dataset with independent sigmoid outputs and multilabel metrics.",
+            "interface_protocol": "pytorch_task_v1",
+            "requirements": {
+                "math": "Include binary cross-entropy with logits and sigmoid activation in LaTeX.",
+                "data": "Synthetic tabular dataset with 20 features and 4 labels; each sample may have multiple active labels.",
+                "implementation": "Use nn.Module, BCEWithLogitsLoss, Adam, and threshold outputs at 0.5.",
+                "metrics": "The evaluate() function must return MSE, R2, subset accuracy, micro-F1, and macro-F1 on the validation split.",
+                "validation": "Assert micro-F1 > 0.85 and macro-F1 > 0.80 on validation.",
+                "output": "Return dict with loss_history, val_loss_history, and final metrics."
+            }
+        },
+        {
             "series": "Convolutional Neural Networks",
             "level": 1,
             "id": "cnn_lvl1_from_scratch_conv",
@@ -617,6 +633,23 @@
             }
         },
         {
+            "series": "Convolutional Neural Networks",
+            "level": 5,
+            "id": "cnn_lvl5_fashionmnist_label_smoothing",
+            "algorithm": "CNN on FashionMNIST (Augmentation + Label Smoothing)",
+            "description": "Train a small CNN on FashionMNIST using torchvision, light augmentation, and label smoothing.",
+            "interface_protocol": "pytorch_task_v1",
+            "requirements": {
+                "data": "Use torchvision.datasets.FashionMNIST with a train/validation split.",
+                "implementation": "Use a small CNN with Conv2d, ReLU, MaxPool, and Linear layers; optimizer = AdamW.",
+                "training_features": "Use normalization, light augmentation, and CrossEntropyLoss with label_smoothing.",
+                "visualization": "Save a confusion matrix plot and a loss curve.",
+                "metrics": "The evaluate() function must return MSE, R2, accuracy, and macro-F1 on the validation split.",
+                "validation": "Assert validation accuracy > 0.85 and macro-F1 > 0.84.",
+                "output": "Return dict with loss_history, val_loss_history, and final metrics."
+            }
+        },
+        {
             "series": "Sequence Models (RNN/LSTM)",
             "level": 1,
             "id": "rnn_lvl1_char_rnn",
@@ -658,6 +691,24 @@
             "interface_protocol": "pytorch_task_v1",
             "requirements": {
                 "benchmark": "Compare padded vs packed runtime; save plot."
+            }
+        },
+        {
+            "series": "Sequence Models (RNN/LSTM)",
+            "level": 5,
+            "id": "rnn_lvl5_gru_timeseries_forecasting",
+            "algorithm": "GRU Time-Series Forecasting",
+            "description": "Use a GRU to forecast the next value of a noisy synthetic seasonal time series from a sliding input window.",
+            "interface_protocol": "pytorch_task_v1",
+            "requirements": {
+                "math": "Include the MSE objective and describe sequence-to-one regression.",
+                "data": "Generate a synthetic time series with trend, seasonality, and noise; create sliding windows of length 24.",
+                "implementation": "Use nn.GRU followed by a linear head; optimizer = Adam.",
+                "training_features": "Support gradient clipping and an optional learning-rate scheduler.",
+                "visualization": "Save a prediction-vs-target plot on the validation set.",
+                "metrics": "The evaluate() function must return MSE, R2, and MAE on the validation split.",
+                "validation": "Assert validation R2 > 0.85 and MAE below a reasonable threshold.",
+                "output": "Return dict with loss_history, val_loss_history, and final metrics."
             }
         },
         {
@@ -750,6 +801,23 @@
             "interface_protocol": "pytorch_task_v1",
             "requirements": {
                 "artifacts": "Save traversal image grid + metrics."
+            }
+        },
+        {
+            "series": "Autoencoders",
+            "level": 5,
+            "id": "ae_lvl5_sparse_autoencoder",
+            "algorithm": "Sparse Autoencoder",
+            "description": "Train a sparse autoencoder with L1 activation regularization and compare reconstruction quality against a baseline autoencoder.",
+            "interface_protocol": "pytorch_task_v1",
+            "requirements": {
+                "math": "Include reconstruction loss and L1 sparsity penalty in LaTeX.",
+                "data": "Use MNIST via torchvision or a synthetic fallback if offline.",
+                "implementation": "Use a fully connected autoencoder in PyTorch and add L1 sparsity regularization on latent activations.",
+                "visualization": "Save reconstruction examples and a training loss curve.",
+                "metrics": "The evaluate() function must return MSE, R2, and latent sparsity statistics on the validation split.",
+                "validation": "Assert validation MSE stays below a defined threshold and mean latent activation is lower than the non-sparse baseline.",
+                "output": "Return dict with loss_history, val_loss_history, sparsity metrics, and final metrics."
             }
         },
         {
